@@ -17,6 +17,9 @@ public class KeyboardChatManager : MonoBehaviour
     public TMP_InputField chatInputField;  // 채팅 입력 필드
     public Button sendButton;              // 전송 버튼
     
+    [Header("OpenAI Assistant API")]
+    public OpenAIAssistantAPI assistantAPI;  // Assistant API 참조
+    
     [Header("Settings")]
     public float messageDuration = 3f;     // 사용자 메시지 표시 시간
     public float animationSpeed = 0.3f;    // UI 애니메이션 속도
@@ -252,9 +255,37 @@ public class KeyboardChatManager : MonoBehaviour
     
     IEnumerator GenerateAIResponse(string userMessage)
     {
-        yield return new WaitForSeconds(1f);
-        
-        string aiResponse = "안녕하세요! 무엇을 도와드릴까요?";
-        ShowAIMessage(aiResponse);
+        if (assistantAPI != null)
+        {
+            bool responseReceived = false;
+            string aiResponse = "";
+            
+            // 로딩 표시 (선택사항)
+            Debug.Log("AI 응답 생성 중...");
+            
+            assistantAPI.SendMessage(userMessage, 
+                (response) => {
+                    aiResponse = response;
+                    responseReceived = true;
+                    Debug.Log($"AI 응답 받음: {response}");
+                },
+                (error) => {
+                    Debug.LogError($"Assistant API 오류: {error}");
+                    aiResponse = "죄송합니다. 응답을 생성할 수 없습니다.";
+                    responseReceived = true;
+                }
+            );
+            
+            // 응답 대기
+            yield return new WaitUntil(() => responseReceived);
+            
+            ShowAIMessage(aiResponse);
+        }
+        else
+        {
+            Debug.LogError("Assistant API가 할당되지 않았습니다!");
+            yield return new WaitForSeconds(1f);
+            ShowAIMessage("Assistant API가 연결되지 않았습니다.");
+        }
     }
 }

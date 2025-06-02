@@ -73,3 +73,50 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# ========================================
+# 프로젝트별 추가 설정
+# ========================================
+
+# API 키 및 민감한 정보 보안
+**/APIConfig.cs
+**/Config.cs
+**/Settings.cs
+**/*API*.cs
+**/*Config*.cs
+
+# 폰트 에셋 (용량이 큰 파일들)
+/[Aa]ssets/[Ff]onts/
+/[Aa]ssets/TextMesh Pro/
+*SDF.asset
+*SDF.asset.meta
+*.ttf
+*.otf
+*.ttf.meta
+*.otf.meta
+
+# Live2D 에셋 (용량이 큰 파일들 - 필요시 주석 해제)
+# /[Aa]ssets/Live2D/
+# *.moc3
+# *.motion3.json
+# *.physics3.json
+
+# 개인 설정 파일들
+ProjectSettings/ProjectVersion.txt
+ProjectSettings/ProjectSettings.asset
+
+# 스크린샷 및 테스트 파일
+/Screenshots/
+/TestFiles/
+*.png
+*.jpg
+*.jpeg
+
+# macOS 시스템 파일
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
