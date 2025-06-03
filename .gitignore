@@ -85,15 +85,15 @@ crashlytics-build.properties
 # **/*API*.cs
 # **/*Config*.cs
 
-# 폰트 에셋 (용량이 큰 파일들)
+# # 폰트 에셋 (용량이 큰 파일들)
 /[Aa]ssets/[Ff]onts/
 /[Aa]ssets/TextMesh Pro/
 *SDF.asset
 *SDF.asset.meta
-*.ttf
-*.otf
-*.ttf.meta
-*.otf.meta
+# *.ttf
+# *.otf
+# *.ttf.meta
+# *.otf.meta
 
 # Live2D 에셋 (용량이 큰 파일들 - 필요시 주석 해제)
 # /[Aa]ssets/Live2D/
