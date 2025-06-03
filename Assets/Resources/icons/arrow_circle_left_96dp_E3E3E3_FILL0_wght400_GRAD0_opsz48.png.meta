@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      arrow_circle_left_96dp_E3E3E3_FILL0_wght400_GRAD0_opsz48_0: 2493111744227633883
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
