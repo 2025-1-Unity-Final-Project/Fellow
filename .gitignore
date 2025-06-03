@@ -79,11 +79,11 @@ crashlytics-build.properties
 # ========================================
 
 # API 키 및 민감한 정보 보안
-**/APIConfig.cs
-**/Config.cs
-**/Settings.cs
-**/*API*.cs
-**/*Config*.cs
+# **/APIConfig.cs
+# **/Config.cs
+# **/Settings.cs
+# **/*API*.cs
+# **/*Config*.cs
 
 # 폰트 에셋 (용량이 큰 파일들)
 /[Aa]ssets/[Ff]onts/
