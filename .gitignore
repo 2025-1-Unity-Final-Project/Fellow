@@ -108,9 +108,7 @@ ProjectSettings/ProjectSettings.asset
 # 스크린샷 및 테스트 파일
 /Screenshots/
 /TestFiles/
-*.png
-*.jpg
-*.jpeg
+
 
 # macOS 시스템 파일
 .DS_Store
