@@ -20,6 +20,9 @@ public class KeyboardChatManager : MonoBehaviour
     [Header("OpenAI Assistant API")]
     public OpenAIAssistantAPI assistantAPI;  // Assistant API 참조
     
+    [Header("Live2D Lip Sync")]
+    public Live2DLipSyncManager lipSyncManager; // 립싱크 매니저
+    
     [Header("Settings")]
     public float messageDuration = 3f;     // 사용자 메시지 표시 시간
     public float animationSpeed = 0.3f;    // UI 애니메이션 속도
@@ -236,12 +239,47 @@ public class KeyboardChatManager : MonoBehaviour
         
         currentAIMessage = Instantiate(aiMessagePrefab, characterTransform);
         TextMeshProUGUI messageText = currentAIMessage.GetComponentInChildren<TextMeshProUGUI>();
-        messageText.text = message;
+        
+        // 타이핑 효과 시간 계산
+        float typingDuration = message.Length * 0.05f;
+        typingDuration = Mathf.Clamp(typingDuration, 2f, 8f); // 최소 2초, 최대 8초
+        
+        // 립싱크 시작 (음성 + 입모양)
+        if (lipSyncManager != null)
+        {
+            lipSyncManager.StartLipSyncWithMessage(message, typingDuration);
+            Debug.Log($"립싱크 시작: {message} (지속시간: {typingDuration}초)");
+        }
+        else
+        {
+            Debug.LogWarning("LipSyncManager가 할당되지 않았습니다!");
+        }
+        
+        // 타이핑 효과 시작
+        StartCoroutine(TypeAIMessage(messageText, message, typingDuration));
         
         RectTransform msgRect = currentAIMessage.GetComponent<RectTransform>();
         msgRect.anchoredPosition = new Vector2(0f, 150f);
         
-        Debug.Log($"AI 메시지 표시: {message}");
+        Debug.Log($"AI 메시지 표시 시작: {message}");
+    }
+    
+    /// <summary>
+    /// AI 메시지 타이핑 효과
+    /// </summary>
+    IEnumerator TypeAIMessage(TextMeshProUGUI textComponent, string fullText, float duration)
+    {
+        textComponent.text = "";
+        float timePerChar = duration / fullText.Length;
+        
+        for (int i = 0; i <= fullText.Length; i++)
+        {
+            textComponent.text = fullText.Substring(0, i);
+            yield return new WaitForSeconds(timePerChar);
+        }
+        
+        textComponent.text = fullText;
+        Debug.Log("AI 메시지 타이핑 완료");
     }
     
     IEnumerator RemoveMessageAfterTime(GameObject message, float delay)
