@@ -9,24 +9,25 @@ namespace ClearSky
 
         private Rigidbody2D rb;
         private Animator anim;
-        Vector3 movement;
+        // Vector3 movement; // 사용되지 않음
         private int direction = 1;
         bool isJumping = false;
         private bool alive = true;
 
+        // UI 버튼 관련 상태 변수
         private bool moveLeft = false;
         private bool moveRight = false;
         private bool jumpPressed = false;
+        private bool interactPressed = false; // UI 상호작용 버튼 상태 변수
 
-        private Vector3 _initialLocalScale; // 초기 스케일 저장 변수
+        private Vector3 _initialLocalScale;
+        private NPCDialogue currentInteractableNPC; // NPCDialogue.cs 필요
 
         void Start()
         {
             rb = GetComponent<Rigidbody2D>();
             anim = GetComponent<Animator>();
-            _initialLocalScale = transform.localScale; // 현재 로컬 스케일 저장
-            // 초기 X 스케일이 음수일 경우를 대비해 절대값으로 저장 (선택적, 혹은 의도에 따라 조절)
-            // 만약 항상 양수로 시작한다면 아래 줄은 필요 없을 수 있습니다.
+            _initialLocalScale = transform.localScale;
             _initialLocalScale.x = Mathf.Abs(_initialLocalScale.x);
         }
 
@@ -35,17 +36,44 @@ namespace ClearSky
             Restart();
             if (alive)
             {
+                HandleInteractionInput();
                 Hurt();
                 Die();
                 Attack();
-                Jump(); // 점프 로직은 스케일을 변경하지 않음
-                Run();  // 이동 로직에서 스케일 변경
+                Jump();
+                Run();
+            }
+        }
+
+        void HandleInteractionInput()
+        {
+            if (interactPressed && currentInteractableNPC != null)
+            {
+                currentInteractableNPC.StartDialogue(); // NPCDialogue 스크립트의 함수 호출
+                interactPressed = false;
             }
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
             anim.SetBool("isJump", false);
+
+            NPCDialogue npc = other.GetComponent<NPCDialogue>();
+            if (npc != null)
+            {
+                currentInteractableNPC = npc;
+                // NPC 범위 진입 시 UI 알림 로직 (필요시)
+            }
+        }
+
+        private void OnTriggerExit2D(Collider2D other)
+        {
+            NPCDialogue npc = other.GetComponent<NPCDialogue>();
+            if (npc != null && npc == currentInteractableNPC)
+            {
+                currentInteractableNPC = null;
+                // NPC 범위 이탈 시 UI 알림 숨김 로직 (필요시)
+            }
         }
 
         void Run()
@@ -53,24 +81,20 @@ namespace ClearSky
             Vector3 moveVelocity = Vector3.zero;
             anim.SetBool("isRun", false);
 
-            float horizontalInput = Input.GetAxisRaw("Horizontal"); // 키보드 입력 미리 받아두기
+            float horizontalInput = Input.GetAxisRaw("Horizontal");
 
             if (horizontalInput < 0 || moveLeft)
             {
                 direction = -1;
                 moveVelocity = Vector3.left;
-
-                // 수정된 부분: 초기 스케일을 기준으로 X축 방향만 변경
                 transform.localScale = new Vector3(_initialLocalScale.x * direction, _initialLocalScale.y, _initialLocalScale.z);
                 if (!anim.GetBool("isJump"))
                     anim.SetBool("isRun", true);
             }
-            if (horizontalInput > 0 || moveRight) // else if 가 아닌 if를 사용하면 양쪽 버튼 동시 입력 시 오른쪽 우선 가능성 있음 (현재 로직 유지)
+            if (horizontalInput > 0 || moveRight)
             {
                 direction = 1;
                 moveVelocity = Vector3.right;
-
-                // 수정된 부분: 초기 스케일을 기준으로 X축 방향만 변경
                 transform.localScale = new Vector3(_initialLocalScale.x * direction, _initialLocalScale.y, _initialLocalScale.z);
                 if (!anim.GetBool("isJump"))
                     anim.SetBool("isRun", true);
@@ -78,8 +102,6 @@ namespace ClearSky
             transform.position += moveVelocity * movePower * Time.deltaTime;
         }
 
-        // Jump, Attack, Hurt, Die, Restart, UI Button handlers (OnLeftDown 등) 함수들은 기존과 동일
-        // ... (나머지 코드 생략) ...
         void Jump()
         {
             if ((Input.GetButtonDown("Jump") || Input.GetAxisRaw("Vertical") > 0 || jumpPressed)
@@ -89,6 +111,7 @@ namespace ClearSky
                 anim.SetBool("isJump", true);
                 jumpPressed = false;
             }
+
             if (!isJumping)
             {
                 return;
@@ -138,10 +161,16 @@ namespace ClearSky
             }
         }
 
+        // --- UI Button Handlers ---
         public void OnLeftDown() { moveLeft = true; }
         public void OnLeftUp() { moveLeft = false; }
         public void OnRightDown() { moveRight = true; }
         public void OnRightUp() { moveRight = false; }
         public void OnJumpDown() { jumpPressed = true; }
+
+        public void OnInteractDown()
+        {
+            interactPressed = true;
+        }
     }
 }
