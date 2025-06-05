@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections; // 코루틴 사용을 위해 추가
 
 namespace ClearSky
 {
@@ -7,9 +8,11 @@ namespace ClearSky
         public float movePower = 10f;
         public float jumpPower = 15f;
 
+        public GameObject attackHitbox; // Inspector에서 AttackHitbox 오브젝트 연결
+        public float attackDuration = 0.2f; // 공격 지속 시간 (초)
+
         private Rigidbody2D rb;
         private Animator anim;
-        // Vector3 movement; // 사용되지 않음
         private int direction = 1;
         bool isJumping = false;
         private bool alive = true;
@@ -18,10 +21,11 @@ namespace ClearSky
         private bool moveLeft = false;
         private bool moveRight = false;
         private bool jumpPressed = false;
-        private bool interactPressed = false; // UI 상호작용 버튼 상태 변수
+        private bool interactPressed = false;
+        private bool attackPressed = false;
 
         private Vector3 _initialLocalScale;
-        private NPCDialogue currentInteractableNPC; // NPCDialogue.cs 필요
+        private NPCDialogue currentInteractableNPC;
 
         void Start()
         {
@@ -29,6 +33,11 @@ namespace ClearSky
             anim = GetComponent<Animator>();
             _initialLocalScale = transform.localScale;
             _initialLocalScale.x = Mathf.Abs(_initialLocalScale.x);
+
+            if (attackHitbox != null)
+            {
+                attackHitbox.SetActive(false);
+            }
         }
 
         private void Update()
@@ -49,7 +58,7 @@ namespace ClearSky
         {
             if (interactPressed && currentInteractableNPC != null)
             {
-                currentInteractableNPC.StartDialogue(); // NPCDialogue 스크립트의 함수 호출
+                currentInteractableNPC.StartDialogue();
                 interactPressed = false;
             }
         }
@@ -62,7 +71,6 @@ namespace ClearSky
             if (npc != null)
             {
                 currentInteractableNPC = npc;
-                // NPC 범위 진입 시 UI 알림 로직 (필요시)
             }
         }
 
@@ -72,7 +80,6 @@ namespace ClearSky
             if (npc != null && npc == currentInteractableNPC)
             {
                 currentInteractableNPC = null;
-                // NPC 범위 이탈 시 UI 알림 숨김 로직 (필요시)
             }
         }
 
@@ -125,9 +132,14 @@ namespace ClearSky
 
         void Attack()
         {
-            if (Input.GetKeyDown(KeyCode.Alpha1))
+            if (Input.GetKeyDown(KeyCode.Alpha1) || attackPressed)
             {
                 anim.SetTrigger("attack");
+                if (attackPressed)
+                {
+                    attackPressed = false;
+                }
+                StartCoroutine(ActivateHitboxRoutine());
             }
         }
 
@@ -167,10 +179,17 @@ namespace ClearSky
         public void OnRightDown() { moveRight = true; }
         public void OnRightUp() { moveRight = false; }
         public void OnJumpDown() { jumpPressed = true; }
+        public void OnInteractDown() { interactPressed = true; }
+        public void OnAttackDown() { attackPressed = true; }
 
-        public void OnInteractDown()
+        IEnumerator ActivateHitboxRoutine()
         {
-            interactPressed = true;
+            if (attackHitbox != null)
+            {
+                attackHitbox.SetActive(true);
+                yield return new WaitForSeconds(attackDuration);
+                attackHitbox.SetActive(false);
+            }
         }
     }
 }
