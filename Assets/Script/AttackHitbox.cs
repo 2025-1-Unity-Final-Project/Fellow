@@ -1,4 +1,3 @@
-// PlayerAttack.cs (또는 AttackHitboxController.cs)
 using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
@@ -21,15 +20,8 @@ public class PlayerAttack : MonoBehaviour
                 enemyHealth.TakeDamage(attackDamage);
                 Debug.Log("Hit " + otherCollider.name + " for " + attackDamage + " damage.");
 
-                // (선택 사항) 한 번의 공격 애니메이션에 여러 번 데미지가 들어가지 않도록
-                // 공격 콜라이더를 비활성화하거나, 이미 맞은 적을 기록하는 로직 추가 가능.
-                // 간단하게는 이 콜라이더를 바로 비활성화 할 수도 있습니다.
-                // gameObject.SetActive(false); 
             }
         }
     }
 
-    // 참고: 이 스크립트가 붙은 AttackHitbox 오브젝트는 
-    // IsTrigger가 체크된 Collider2D를 가지고 있어야 하며,
-    // 공격 애니메이션 중에만 활성화되어야 합니다.
 }

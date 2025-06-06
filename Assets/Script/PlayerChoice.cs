@@ -1,5 +1,3 @@
-// 이 클래스들은 NPCDialogue.cs 파일 상단이나 별도의 파일에 정의할 수 있습니다.
-// [System.Serializable] 어트리뷰트를 추가하면 유니티 인스펙터에서 편집 가능합니다.
 
 using System.Collections.Generic;
 
@@ -8,8 +6,7 @@ public class PlayerChoice
 {
     public string choiceText;          // 플레이어가 선택할 문구
     public int nextSegmentIndex = -1;  // 이 선택지를 골랐을 때 이동할 다음 DialogueSegment의 인덱스 (-1이면 대화 종료)
-    // 필요하다면, 이 선택지를 골랐을 때 특정 이벤트가 발생하도록 콜백 등을 추가할 수도 있습니다.
-    // public UnityEngine.Events.UnityEvent onChoiceSelectedAction;
+   
 }
 
 [System.Serializable]

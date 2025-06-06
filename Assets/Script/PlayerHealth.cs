@@ -1,14 +1,15 @@
 // PlayerHealth.cs
 using UnityEngine;
-using UnityEngine.UI; // HP 바 UI를 사용한다면 필요
+using UnityEngine.UI; // Slider 사용을 위해 필요
 using System.Collections;
 
 public class PlayerHealth : MonoBehaviour
 {
     [Header("Health Settings")]
-    public float maxHealth = 100f;
+    public float maxHealth = 100f; // 최대 체력을 100으로 고정하거나, Inspector에서 설정
     public float currentHealth;
-    public Image healthBarFill;
+    // public Image healthBarFill; // Image 대신 Slider 사용 ▼▼▼
+    public Slider healthSlider;    // Inspector에서 Slider 컴포넌트를 연결합니다.
 
     [Header("Invincibility Settings")]
     public bool isInvincible = false;
@@ -18,8 +19,8 @@ public class PlayerHealth : MonoBehaviour
     public float damageFromEnemy = 10f;
     public string enemyTag = "Enemy";
 
-    [Header("Game Over UI")] // ▼▼▼ [새로 추가] 게임 오버 UI 참조 ▼▼▼
-    public GameObject gameOverPanel; // Inspector에서 "GameOverPanel" 오브젝트를 연결합니다.
+    [Header("Game Over UI")]
+    public GameObject gameOverPanel;
 
     private Animator anim;
     private Rigidbody2D rb;
@@ -29,7 +30,19 @@ public class PlayerHealth : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
-        UpdateHealthUI();
+
+        // ▼▼▼ Slider 초기 설정 ▼▼▼
+        if (healthSlider != null)
+        {
+            healthSlider.minValue = 0f;         // 슬라이더 최소값을 0으로 설정
+            healthSlider.maxValue = maxHealth;  // 슬라이더 최대값을 maxHealth(예: 100)로 설정
+            healthSlider.value = currentHealth; // 현재 체력으로 슬라이더 값 초기화
+        }
+        else
+        {
+            Debug.LogWarning("PlayerHealth: HealthSlider is not assigned in the Inspector.");
+        }
+        // ▲▲▲ Slider 초기 설정 ▲▲▲
 
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
@@ -37,10 +50,9 @@ public class PlayerHealth : MonoBehaviour
 
         if (spriteRenderer == null)
         {
-            Debug.LogWarning("PlayerHealth: SpriteRenderer component not found on " + gameObject.name + ". Damage flash will not work.");
+            Debug.LogWarning("PlayerHealth: SpriteRenderer component not found. Damage flash will not work.");
         }
 
-        // ▼▼▼ [새로 추가] 게임 시작 시 게임 오버 패널 비활성화 (만약을 위해) ▼▼▼
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(false);
@@ -56,13 +68,14 @@ public class PlayerHealth : MonoBehaviour
         if (isInvincible) return;
 
         currentHealth -= damageAmount;
-        currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+        currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth); // 체력은 0과 maxHealth 사이로 유지
         Debug.Log(gameObject.name + " took " + damageAmount + " damage. Current HP: " + currentHealth);
-        UpdateHealthUI();
+
+        UpdateHealthUI(); // 체력 UI 업데이트 함수 호출
 
         if (anim != null)
         {
-            anim.SetTrigger("hurt"); // 스크립트의 파라미터 이름과 Animator Controller의 파라미터 이름 일치 확인
+            anim.SetTrigger("hurt");
         }
 
         if (spriteRenderer != null)
@@ -83,10 +96,12 @@ public class PlayerHealth : MonoBehaviour
 
     void UpdateHealthUI()
     {
-        if (healthBarFill != null)
+        // ▼▼▼ Slider 값 업데이트 ▼▼▼
+        if (healthSlider != null)
         {
-            healthBarFill.fillAmount = currentHealth / maxHealth;
+            healthSlider.value = currentHealth; // Slider의 value를 현재 체력으로 직접 설정
         }
+        // ▲▲▲ Slider 값 업데이트 ▲▲▲
     }
 
     void Die()
@@ -94,39 +109,20 @@ public class PlayerHealth : MonoBehaviour
         Debug.Log(gameObject.name + " has died.");
         if (anim != null)
         {
-            anim.SetTrigger("die"); // 스크립트의 파라미터 이름과 Animator Controller의 파라미터 이름 일치 확인
+            anim.SetTrigger("die");
         }
-
-        // ▼▼▼ [새로 추가] 게임 오버 패널 활성화 ▼▼▼
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(true);
         }
-        // ▲▲▲ [새로 추가] 게임 오버 패널 활성화 ▲▲▲
-
-        // (선택 사항) 게임 시간 정지
-        // Time.timeScale = 0f; // 게임의 모든 시간 흐름을 멈춥니다. UI 애니메이션도 멈출 수 있으니 주의.
-
-        // (선택 사항) 플레이어 컨트롤 비활성화 등
-        // SimplePlayerController spc = GetComponent<SimplePlayerController>();
-        // if (spc != null)
-        // {
-        //     spc.enabled = false;
-        // }
-        // if (rb != null)
-        // {
-        //     rb.velocity = Vector2.zero; // 움직임 멈춤
-        // }
-        // gameObject.SetActive(false); // 플레이어 오브젝트 자체를 비활성화할 수도 있음
     }
 
     private IEnumerator BecomeTemporarilyInvincible()
     {
         isInvincible = true;
         float endTime = Time.time + invincibilityDuration;
-        Color originalColor = Color.white; // 원래 색상 저장 (깜빡임 후 복원용)
+        Color originalColor = Color.white;
         if (spriteRenderer != null) originalColor = spriteRenderer.color;
-
 
         while (Time.time < endTime)
         {
@@ -139,7 +135,7 @@ public class PlayerHealth : MonoBehaviour
         if (spriteRenderer != null)
         {
             spriteRenderer.enabled = true;
-            spriteRenderer.color = originalColor; // 깜빡임 후 원래 색상으로 최종 복원
+            spriteRenderer.color = originalColor;
         }
         isInvincible = false;
     }
@@ -147,7 +143,7 @@ public class PlayerHealth : MonoBehaviour
     private IEnumerator ResetColorAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        if (spriteRenderer != null && !isInvincible) // 무적 깜빡임이 시작되기 전 또는 무적 상태가 아니라면
+        if (spriteRenderer != null && !isInvincible)
         {
             spriteRenderer.color = Color.white;
         }
@@ -156,7 +152,6 @@ public class PlayerHealth : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         Debug.Log("OnCollisionEnter2D 발생! 충돌한 오브젝트: " + collision.gameObject.name);
-
         if (collision.gameObject.CompareTag(enemyTag))
         {
             Debug.Log("Player collided with an enemy: " + collision.gameObject.name);
@@ -168,17 +163,10 @@ public class PlayerHealth : MonoBehaviour
     {
         currentHealth = maxHealth;
         isInvincible = false;
-        UpdateHealthUI();
+        UpdateHealthUI(); // 체력 UI 업데이트 함수 호출
         if (spriteRenderer != null)
         {
             spriteRenderer.color = Color.white;
         }
-        // (선택 사항) 게임 오버 패널 비활성화
-        // if (gameOverPanel != null)
-        // {
-        //     gameOverPanel.SetActive(false);
-        // }
-        // (선택 사항) 게임 시간 다시 흐르게
-        // Time.timeScale = 1f;
     }
 }

@@ -9,7 +9,7 @@ namespace ClearSky
     {
 
         Animator anim;
-        // Start is called before the first frame update
+      
         void Awake()
         {
             anim = GetComponent<Animator>();
