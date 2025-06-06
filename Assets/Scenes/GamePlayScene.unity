@@ -1061,7 +1061,13 @@ PrefabInstance:
       addedObject: {fileID: 1971776667}
     - targetCorrespondingSourceObject: {fileID: 2364492899665514887, guid: d26104f97f427174aa47a89f19e15c46, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 1971776671}
+    - targetCorrespondingSourceObject: {fileID: 2364492899665514887, guid: d26104f97f427174aa47a89f19e15c46, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 1971776669}
+    - targetCorrespondingSourceObject: {fileID: 2364492899665514887, guid: d26104f97f427174aa47a89f19e15c46, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1971776672}
   m_SourcePrefab: {fileID: 100100000, guid: d26104f97f427174aa47a89f19e15c46, type: 3}
 --- !u!1 &986177259
 GameObject:
@@ -1299,7 +1305,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 794697843, guid: 904d0b8c28276a64c8101ddedd894d57, type: 3}
   m_PrefabInstance: {fileID: 1386542887}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1202243813}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 741f30960d63a984c904285d23069b75, type: 3}
@@ -1576,6 +1582,30 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1202243813 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8853461538655865705, guid: 904d0b8c28276a64c8101ddedd894d57, type: 3}
+  m_PrefabInstance: {fileID: 1386542887}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1202243819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1202243813}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e167eea25fe02b145a7de3469e3b64bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  currentHealth: 0
+  healthBarFill: {fileID: 0}
+  isInvincible: 0
+  invincibilityDuration: 1
+  damageFromEnemy: 20
+  enemyTag: Enemy
 --- !u!1 &1345009061
 GameObject:
   m_ObjectHideFlags: 0
@@ -1722,7 +1752,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 794697843, guid: 904d0b8c28276a64c8101ddedd894d57, type: 3}
       propertyPath: jumpPower
-      value: 12
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 794697843, guid: 904d0b8c28276a64c8101ddedd894d57, type: 3}
       propertyPath: movePower
@@ -1732,6 +1762,10 @@ PrefabInstance:
       propertyPath: attackHitbox
       value: 
       objectReference: {fileID: 1004067914}
+    - target: {fileID: 794697847, guid: 904d0b8c28276a64c8101ddedd894d57, type: 3}
+      propertyPath: m_Constraints
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 8853461538655865705, guid: 904d0b8c28276a64c8101ddedd894d57, type: 3}
       propertyPath: m_Name
       value: Wizard Variant
@@ -1797,7 +1831,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8853461538655865707, guid: 904d0b8c28276a64c8101ddedd894d57, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1004067915}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8853461538655865705, guid: 904d0b8c28276a64c8101ddedd894d57, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1202243819}
   m_SourcePrefab: {fileID: 100100000, guid: 904d0b8c28276a64c8101ddedd894d57, type: 3}
 --- !u!1 &1473910059
 GameObject:
@@ -2474,7 +2511,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -2488,7 +2525,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 18, y: 20}
+  m_Size: {x: 10, y: 16}
   m_EdgeRadius: 0
 --- !u!50 &1971776669
 Rigidbody2D:
@@ -2517,6 +2554,45 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 7
+--- !u!114 &1971776671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1971776665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a4c0083791bd204b94a376f9a324491, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 1
+  startWaitTime: 0
+  moveSpot: {fileID: 0}
+  patrolAreaMin: {x: -6, y: -3.5}
+  patrolAreaMax: {x: 6, y: -3.5}
+--- !u!95 &1971776672
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1971776665}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 9bbc8a8176849424d804c9ed1402f23c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1986236511
 GameObject:
   m_ObjectHideFlags: 0
