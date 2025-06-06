@@ -20,8 +20,9 @@ public class KeyboardChatManager : MonoBehaviour
     [Header("OpenAI Assistant API")]
     public OpenAIAssistantAPI assistantAPI;  // Assistant API 참조
     
-    [Header("Live2D Lip Sync")]
-    public Live2DLipSyncManager lipSyncManager; // 립싱크 매니저
+    [Header("Live2D Systems")]
+    public Live2DLipSyncManager lipSyncManager;          // 립싱크 시스템
+    public Live2DCharacterLifeSystem characterLifeSystem; // 생동감 시스템
     
     [Header("Settings")]
     public float messageDuration = 3f;     // 사용자 메시지 표시 시간
@@ -236,15 +237,22 @@ public class KeyboardChatManager : MonoBehaviour
         {
             Destroy(currentAIMessage);
         }
-        
+
         currentAIMessage = Instantiate(aiMessagePrefab, characterTransform);
         TextMeshProUGUI messageText = currentAIMessage.GetComponentInChildren<TextMeshProUGUI>();
         
         // 타이핑 효과 시간 계산
         float typingDuration = message.Length * 0.05f;
-        typingDuration = Mathf.Clamp(typingDuration, 2f, 8f); // 최소 2초, 최대 8초
+        typingDuration = Mathf.Clamp(typingDuration, 2f, 8f);
         
-        // 립싱크 시작 (음성 + 입모양)
+        // 🎭 생동감 시스템에 대화 시작 알림
+        if (characterLifeSystem != null)
+        {
+            characterLifeSystem.SetTalkingState(true);
+            Debug.Log("생동감 시스템 일시정지 - 대화 시작");
+        }
+        
+        // 🎤 립싱크 시작
         if (lipSyncManager != null)
         {
             lipSyncManager.StartLipSyncWithMessage(message, typingDuration);
@@ -255,8 +263,8 @@ public class KeyboardChatManager : MonoBehaviour
             Debug.LogWarning("LipSyncManager가 할당되지 않았습니다!");
         }
         
-        // 타이핑 효과 시작
-        StartCoroutine(TypeAIMessage(messageText, message, typingDuration));
+        // 타이핑 효과 시작 (생동감 시스템과 연동)
+        StartCoroutine(TypeAIMessageWithLifeSystem(messageText, message, typingDuration));
         
         RectTransform msgRect = currentAIMessage.GetComponent<RectTransform>();
         msgRect.anchoredPosition = new Vector2(0f, 150f);
@@ -265,9 +273,9 @@ public class KeyboardChatManager : MonoBehaviour
     }
     
     /// <summary>
-    /// AI 메시지 타이핑 효과
+    /// 생동감 시스템과 연동된 타이핑 효과
     /// </summary>
-    IEnumerator TypeAIMessage(TextMeshProUGUI textComponent, string fullText, float duration)
+    IEnumerator TypeAIMessageWithLifeSystem(TextMeshProUGUI textComponent, string fullText, float duration)
     {
         textComponent.text = "";
         float timePerChar = duration / fullText.Length;
@@ -279,6 +287,14 @@ public class KeyboardChatManager : MonoBehaviour
         }
         
         textComponent.text = fullText;
+        
+        // 🎭 대화 종료 - 생동감 시스템 재개
+        if (characterLifeSystem != null)
+        {
+            characterLifeSystem.SetTalkingState(false);
+            Debug.Log("대화 완료 - 생동감 시스템 재개");
+        }
+        
         Debug.Log("AI 메시지 타이핑 완료");
     }
     
