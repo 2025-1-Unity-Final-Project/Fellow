@@ -118,7 +118,20 @@ public class Live2DCharacterLifeSystem : MonoBehaviour
         
         var parameters = cubismModel.Parameters;
         Debug.Log("🎭 생동감 시스템 초기화 중...");
-        
+        Debug.Log("=== 중요 파라미터 검색 ===");
+        for (int i = 0; i < parameters.Length; i++)
+        {
+            string id = parameters[i].Id;
+            
+            // 중요한 파라미터들만 출력
+            if (id.Contains("Eye") || id.Contains("Mouth") || id.Contains("Angle") || 
+                id.Contains("Body") || id.Contains("Breath") || id.Contains("Brow") ||
+                id.Contains("眼") || id.Contains("嘴") || id.Contains("角度") || 
+                id.Contains("身体") || id.Contains("呼吸"))
+            {
+                Debug.Log($"⭐ [{i:D2}] '{id}' (값: {parameters[i].Value:F2})");
+            }
+        }
         // 파라미터 찾기
         foreach (var param in parameters)
         {

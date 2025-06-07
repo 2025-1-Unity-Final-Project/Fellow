@@ -17,6 +17,9 @@ public class Live2DLipSyncManager : MonoBehaviour
     [Header("Lip Sync Parameters")]
     public string mouthOpenParamName = "ParamMouthOpenY";
     public string mouthFormParamName = "ParamMouthForm";
+    public string mouthSizeParamName = "ParamMouthSize";
+    public string tongueParamName = "ParamTongue";
+    public string cheekParamName = "ParamCheek";
     
     [Header("Lip Sync Settings")]
     public float lipSyncSpeed = 15f;      // 속도 증가
@@ -27,6 +30,9 @@ public class Live2DLipSyncManager : MonoBehaviour
     
     private CubismParameter mouthOpenParam;
     private CubismParameter mouthFormParam;
+    private CubismParameter mouthSizeParam;
+    private CubismParameter tongueParam;
+    private CubismParameter cheekParam;
     private Coroutine currentLipSyncCoroutine;
     private Coroutine currentVoiceCoroutine;
     private Coroutine currentResetCoroutine;
@@ -91,11 +97,35 @@ public class Live2DLipSyncManager : MonoBehaviour
                 mouthOpenParam = parameters[i];
                 foundMouthOpen = true;
                 Debug.Log($"✅ 완전 일치로 입 파라미터 찾음: '{paramId}'");
-                break;
+            }
+            
+            // 다양한 입 파라미터 찾기
+            if (paramId == mouthFormParamName || paramId.Contains("MouthForm") || paramId.Contains("嘴形"))
+            {
+                mouthFormParam = parameters[i];
+                Debug.Log($"✅ 입 모양 파라미터 찾음: '{paramId}'");
+            }
+            
+            if (paramId == mouthSizeParamName || paramId.Contains("MouthSize") || paramId.Contains("嘴大小"))
+            {
+                mouthSizeParam = parameters[i];
+                Debug.Log($"✅ 입 크기 파라미터 찾음: '{paramId}'");
+            }
+            
+            if (paramId == tongueParamName || paramId.Contains("Tongue") || paramId.Contains("舌"))
+            {
+                tongueParam = parameters[i];
+                Debug.Log($"✅ 혀 파라미터 찾음: '{paramId}'");
+            }
+            
+            if (paramId == cheekParamName || paramId.Contains("Cheek") || paramId.Contains("脸颊"))
+            {
+                cheekParam = parameters[i];
+                Debug.Log($"✅ 볼 파라미터 찾음: '{paramId}'");
             }
             
             // 부분 매칭으로도 시도
-            if (paramId.Contains("嘴") && paramId.Contains("张") && paramId.Contains("闭"))
+            if (!foundMouthOpen && paramId.Contains("嘴") && paramId.Contains("张") && paramId.Contains("闭"))
             {
                 mouthOpenParam = parameters[i];
                 foundMouthOpen = true;
@@ -103,7 +133,6 @@ public class Live2DLipSyncManager : MonoBehaviour
                 Debug.Log($"   원래 찾던 이름: '{mouthOpenParamName}'");
                 // 정확한 이름으로 업데이트
                 mouthOpenParamName = paramId;
-                break;
             }
         }
         
@@ -266,28 +295,97 @@ public class Live2DLipSyncManager : MonoBehaviour
     
     private float GetMouthValueForCharacter(char character)
     {
-        float baseValue = 0.3f; // 기본 입 열림을 더 크게
+        float baseValue = 0.3f;
         
-        // 한국어 모음별 강화된 입모양
-        if (character == '안' || character == 'ㅏ' || character == '아') return 1.5f * lipSyncIntensity;
-        if (character == '녕' || character == 'ㅕ' || character == '어') return 1.2f * lipSyncIntensity;
-        if (character == '하' || character == 'ㅏ') return 1.4f * lipSyncIntensity;
-        if (character == '세' || character == 'ㅔ' || character == '에') return 1.1f * lipSyncIntensity;
-        if (character == '요' || character == 'ㅛ' || character == '오') return 1.0f * lipSyncIntensity;
-        if (character == '이' || character == 'ㅣ') return 0.4f * lipSyncIntensity;
-        if (character == '우' || character == 'ㅜ') return 0.8f * lipSyncIntensity;
+        // 한국어 모음별 풍성한 입모양
+        if (character == '안' || character == 'ㅏ' || character == '아') 
+        {
+            SetMouthParameters(1.5f, 0.8f, 1.2f, 0.3f, 0.5f); // 입열림, 입모양, 크기, 혀, 볼
+            return 1.5f * lipSyncIntensity;
+        }
+        if (character == '녕' || character == 'ㅕ' || character == '어') 
+        {
+            SetMouthParameters(1.2f, 0.5f, 1.0f, 0.2f, 0.3f);
+            return 1.2f * lipSyncIntensity;
+        }
+        if (character == '세' || character == 'ㅔ' || character == '에') 
+        {
+            SetMouthParameters(1.1f, 0.3f, 0.8f, 0.1f, 0.2f);
+            return 1.1f * lipSyncIntensity;
+        }
+        if (character == '요' || character == 'ㅛ' || character == '오') 
+        {
+            SetMouthParameters(1.0f, -0.5f, 0.6f, 0.0f, 0.4f); // 둥근 입모양
+            return 1.0f * lipSyncIntensity;
+        }
+        if (character == '이' || character == 'ㅣ') 
+        {
+            SetMouthParameters(0.4f, 0.8f, 0.3f, 0.0f, -0.2f); // 가로로 긴 입모양
+            return 0.4f * lipSyncIntensity;
+        }
+        if (character == '우' || character == 'ㅜ') 
+        {
+            SetMouthParameters(0.8f, -0.8f, 0.4f, 0.0f, 0.6f); // 뾰족한 입모양
+            return 0.8f * lipSyncIntensity;
+        }
         
         // 영어 모음
-        if (character == 'a' || character == 'A') return 1.4f * lipSyncIntensity;
-        if (character == 'e' || character == 'E') return 1.1f * lipSyncIntensity;
-        if (character == 'i' || character == 'I') return 0.4f * lipSyncIntensity;
-        if (character == 'o' || character == 'O') return 1.0f * lipSyncIntensity;
-        if (character == 'u' || character == 'U') return 0.8f * lipSyncIntensity;
+        if (character == 'a' || character == 'A') 
+        {
+            SetMouthParameters(1.4f, 0.7f, 1.1f, 0.3f, 0.4f);
+            return 1.4f * lipSyncIntensity;
+        }
+        if (character == 'e' || character == 'E') 
+        {
+            SetMouthParameters(1.1f, 0.4f, 0.9f, 0.1f, 0.2f);
+            return 1.1f * lipSyncIntensity;
+        }
+        if (character == 'i' || character == 'I') 
+        {
+            SetMouthParameters(0.4f, 0.9f, 0.3f, 0.0f, -0.1f);
+            return 0.4f * lipSyncIntensity;
+        }
+        if (character == 'o' || character == 'O') 
+        {
+            SetMouthParameters(1.0f, -0.6f, 0.7f, 0.0f, 0.5f);
+            return 1.0f * lipSyncIntensity;
+        }
+        if (character == 'u' || character == 'U') 
+        {
+            SetMouthParameters(0.8f, -0.9f, 0.5f, 0.0f, 0.7f);
+            return 0.8f * lipSyncIntensity;
+        }
         
-        // 자음이나 기타 문자
-        if (char.IsLetter(character)) return baseValue * lipSyncIntensity;
+        // 자음 (입술 닫힘)
+        if (character == 'ㅁ' || character == 'ㅂ' || character == 'ㅍ' || character == 'm' || character == 'b' || character == 'p')
+        {
+            SetMouthParameters(0.1f, 0.0f, 0.2f, 0.0f, 0.1f);
+            return 0.1f * lipSyncIntensity;
+        }
         
-        return 0.1f; // 공백이나 특수문자
+        // 기타 자음
+        if (char.IsLetter(character)) 
+        {
+            SetMouthParameters(baseValue, 0.2f, 0.5f, 0.1f, 0.2f);
+            return baseValue * lipSyncIntensity;
+        }
+        
+        return 0.1f;
+    }
+    
+    private void SetMouthParameters(float openValue, float formValue, float sizeValue, float tongueValue, float cheekValue)
+    {
+        if (mouthFormParam != null)
+            mouthFormParam.Value = Mathf.Lerp(mouthFormParam.Value, formValue * lipSyncIntensity, Time.deltaTime * lipSyncSpeed);
+        
+        if (mouthSizeParam != null)
+            mouthSizeParam.Value = Mathf.Lerp(mouthSizeParam.Value, sizeValue * lipSyncIntensity, Time.deltaTime * lipSyncSpeed);
+        
+        if (tongueParam != null)
+            tongueParam.Value = Mathf.Lerp(tongueParam.Value, tongueValue * lipSyncIntensity, Time.deltaTime * lipSyncSpeed);
+        
+        if (cheekParam != null)
+            cheekParam.Value = Mathf.Lerp(cheekParam.Value, cheekValue * lipSyncIntensity, Time.deltaTime * lipSyncSpeed);
     }
     
     public void StopCurrentLipSync()
