@@ -23,15 +23,23 @@ public class Live2DLipSyncManager : MonoBehaviour
     public float baseMouthValue = 0f;
     public float maxMouthOpen = 3f;       // 최대값 증가 (Live2D 파라미터 범위에 따라 조정)
     public float lipSyncIntensity = 2f;   // 립싱크 강도 배율
+    public float resetDuration = 0.5f;    // 입모양 복귀 시간
     
     private CubismParameter mouthOpenParam;
     private CubismParameter mouthFormParam;
     private Coroutine currentLipSyncCoroutine;
     private Coroutine currentVoiceCoroutine;
+    private Coroutine currentResetCoroutine;
     
     void Start()
     {
         InitializeLipSyncParameters();
+        
+        // 시작 시 입을 확실히 닫기
+        if (mouthOpenParam != null)
+        {
+            mouthOpenParam.Value = baseMouthValue;
+        }
     }
     
     private void InitializeLipSyncParameters()
@@ -117,6 +125,13 @@ public class Live2DLipSyncManager : MonoBehaviour
         else
         {
             Debug.Log($"   현재 값: {mouthOpenParam.Value}, 범위: {mouthOpenParam.MinimumValue} ~ {mouthOpenParam.MaximumValue}");
+            
+            // baseMouthValue를 파라미터의 최소값으로 설정하여 확실히 닫기
+            if (baseMouthValue == 0f)
+            {
+                baseMouthValue = mouthOpenParam.MinimumValue;
+                Debug.Log($"   baseMouthValue를 최소값으로 설정: {baseMouthValue}");
+            }
         }
     }
     
@@ -233,7 +248,20 @@ public class Live2DLipSyncManager : MonoBehaviour
             yield return null;
         }
         
-        Debug.Log("🎬 립싱크 완료");
+        // 립싱크 완료 후 부드럽게 원상복귀
+        float resetElapsed = 0f;
+        float startValue = mouthOpenParam.Value;
+        
+        while (resetElapsed < resetDuration)
+        {
+            float t = resetElapsed / resetDuration;
+            mouthOpenParam.Value = Mathf.Lerp(startValue, baseMouthValue, t);
+            resetElapsed += Time.deltaTime;
+            yield return null;
+        }
+        
+        mouthOpenParam.Value = baseMouthValue;
+        Debug.Log("🎬 립싱크 완료 및 입모양 복귀");
     }
     
     private float GetMouthValueForCharacter(char character)
@@ -270,9 +298,37 @@ public class Live2DLipSyncManager : MonoBehaviour
             currentLipSyncCoroutine = null;
         }
         
+        // 기존 리셋 코루틴 중단
+        if (currentResetCoroutine != null)
+        {
+            StopCoroutine(currentResetCoroutine);
+            currentResetCoroutine = null;
+        }
+        
+        // 부드럽게 원상복귀
         if (mouthOpenParam != null)
         {
-            mouthOpenParam.Value = baseMouthValue;
+            currentResetCoroutine = StartCoroutine(SmoothResetMouth());
         }
+    }
+    
+    private IEnumerator SmoothResetMouth()
+    {
+        if (mouthOpenParam == null) yield break;
+        
+        float startValue = mouthOpenParam.Value;
+        float elapsed = 0f;
+        
+        while (elapsed < resetDuration)
+        {
+            float t = elapsed / resetDuration;
+            mouthOpenParam.Value = Mathf.Lerp(startValue, baseMouthValue, t);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        
+        mouthOpenParam.Value = baseMouthValue;
+        currentResetCoroutine = null;
+        Debug.Log("🔒 입모양 완전 복귀 완료");
     }
 }
