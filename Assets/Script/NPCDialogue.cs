@@ -23,12 +23,9 @@ namespace ClearSky
         public GameObject affinityPanel; // 여기에 AffinityPanel 오브젝트를 연결합니다.
 
         private int currentSegmentIndex = 0;
-        private SimplePlayerController playerController; // 이전에 사용하던 변수, 필요 없다면 제거 가능
+        private SimplePlayerController playerController; 
 
-        // 이 변수를 추가하여, 어떤 세그먼트가 호감도 패널을 열어야 하는지 지정합니다.
-        // 예시: Element 3 (인덱스 3)이 호감도 패널을 여는 세그먼트라고 가정합니다.
-        // 인스펙터에서 이 값을 설정하거나, 더 복잡한 로직으로 결정할 수도 있습니다.
-        // 지금은 간단하게, "현재 호감도를 보여줄게" 세그먼트의 인덱스가 3이라고 가정하고 코드에 반영합니다.
+       
         private const int AFFINITY_TRIGGER_SEGMENT_INDEX = 3;
 
         void Start()
@@ -171,14 +168,11 @@ namespace ClearSky
             }
             currentSegmentIndex = 0; // 다음 대화를 위해 초기화
 
-            // 특정 세그먼트에서 대화가 종료되었을 때 AffinityPanel을 엽니다.
-            // AFFINITY_TRIGGER_SEGMENT_INDEX는 '현재 호감도를 보여줄게' 세그먼트의 인덱스여야 합니다.
-            // 사용자님의 사진에서는 Element 3이므로, 인덱스는 3입니다.
+         
             if (endedSegmentIndex == AFFINITY_TRIGGER_SEGMENT_INDEX && affinityPanel != null)
             {
                 affinityPanel.SetActive(true);
-                // 여기에 AffinityPanel에 실제 호감도 데이터를 전달하고 업데이트하는 로직을 추가할 수 있습니다.
-                // 예: affinityPanel.GetComponent<AffinityDisplayScript>().ShowAffinity(someAffinityValue);
+           
             }
         }
     }
