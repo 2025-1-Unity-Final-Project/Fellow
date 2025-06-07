@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -73,17 +74,23 @@ public class GameManager : MonoBehaviour
     void InitializeLevel()
     {
         enemyCount = GameObject.FindGameObjectsWithTag("Enemy").Length;
-        Debug.Log("레벨 초기화: 초기 적 수: " + enemyCount);
-        levelComplete = false; // 레벨 완료 상태 초기화
+        levelComplete = false;
 
-     
         if (successPanel != null)
         {
             successPanel.SetActive(false);
+
+            // SuccessPanel 하위에 있는 Button 컴포넌트 찾기
+            Button nextButton = successPanel.GetComponentInChildren<Button>();
+            if (nextButton != null)
+            {
+                nextButton.onClick.RemoveAllListeners(); // 중복 방지
+                nextButton.onClick.AddListener(LoadNPCScene); // 이벤트 연결
+            }
         }
     }
 
-    
+
     void Start()
     {
        

@@ -114,6 +114,28 @@ public class PlayerHealth : MonoBehaviour
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(true);
+
+            // Retry 버튼 찾기 (이름으로 찾는 것이 가장 안전)
+            Button retryButton = gameOverPanel.transform.Find("RetryButton")?.GetComponent<Button>();
+            if (retryButton != null)
+            {
+                retryButton.onClick.RemoveAllListeners();
+                retryButton.onClick.AddListener(() =>
+                {
+                    GameManager.Instance.RetryGame();
+                });
+            }
+
+            // NPCButton 찾기
+            Button npcButton = gameOverPanel.transform.Find("NPCButton")?.GetComponent<Button>();
+            if (npcButton != null)
+            {
+                npcButton.onClick.RemoveAllListeners();
+                npcButton.onClick.AddListener(() =>
+                {
+                    GameManager.Instance.LoadNPCScene();
+                });
+            }
         }
     }
 

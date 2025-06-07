@@ -78,8 +78,7 @@ public class EnemyHealth : MonoBehaviour
     {
         Debug.Log(gameObject.name + " has died.");
 
-        // ▼▼▼ GameManager.Instance.EnemyDestroyed() 호출 ▼▼▼
-        // GameManager가 존재한다면, EnemyDestroyed 함수 호출
+
         if (GameManager.Instance != null)
         {
             GameManager.Instance.EnemyDestroyed();
@@ -88,7 +87,7 @@ public class EnemyHealth : MonoBehaviour
         {
             Debug.LogError("GameManager instance not found!");
         }
-        // ▲▲▲ GameManager.Instance.EnemyDestroyed() 호출 ▲▲▲
+       
 
         Destroy(gameObject);
     }
