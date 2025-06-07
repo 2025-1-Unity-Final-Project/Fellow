@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    [Header("씬 이름")]
+    [Header("Scene Name")]
     public string npcSceneName = "NPCScene";
     public string gamePlaySceneName = "GamePlayScene"; // ▼▼▼ GamePlayScene 이름 설정 ▼▼▼
 
@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     // ▼▼▼ Inspector에서 연결은 하지만, 실제 사용은 OnSceneLoaded에서 재할당될 수 있음 ▼▼▼
     public GameObject successPanel;
 
-    [Header("호감도(친밀도)")]
+    [Header("Affinity")]
     public int affinity = 0;
 
     private int enemyCount = 0;

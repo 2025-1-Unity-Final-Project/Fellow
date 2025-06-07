@@ -8,7 +8,7 @@ public class EnemyHealth : MonoBehaviour
     public float currentHealth;
     public int attackDamageFromPlayer = 25; // 플레이어로부터 받을 기본 데미지
 
-    [Header("체력 바 UI")] // ▼▼▼ Inspector에서 연결할 변수들 ▼▼▼
+    [Header("HP Slider")] // ▼▼▼ Inspector에서 연결할 변수들 ▼▼▼
     public Slider healthBar; // 씬에 배치된 체력 바 슬라이더 (Inspector에서 연결)
     public Vector3 healthBarOffset = new Vector3(0, 2, 0); // 체력 바 위치 오프셋
 
