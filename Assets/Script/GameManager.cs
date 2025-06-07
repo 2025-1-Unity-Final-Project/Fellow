@@ -16,6 +16,9 @@ public class GameManager : MonoBehaviour
     // ▼▼▼ Inspector에서 연결은 하지만, 실제 사용은 OnSceneLoaded에서 재할당될 수 있음 ▼▼▼
     public GameObject successPanel;
 
+    [Header("호감도(친밀도)")]
+    public int affinity = 0;
+
     private int enemyCount = 0;
     private bool levelComplete = false;
 

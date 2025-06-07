@@ -78,16 +78,15 @@ public class EnemyHealth : MonoBehaviour
     {
         Debug.Log(gameObject.name + " has died.");
 
-
         if (GameManager.Instance != null)
         {
+            GameManager.Instance.affinity++; // 호감도 1 증가
             GameManager.Instance.EnemyDestroyed();
         }
         else
         {
             Debug.LogError("GameManager instance not found!");
         }
-       
 
         Destroy(gameObject);
     }
