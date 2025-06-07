@@ -12,4 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f401bb1c5c52514eba33c0c2ffdc8ff, type: 3}
   m_Name: Frieren.expressionList
   m_EditorClassIdentifier: 
-  CubismExpressionObjects: []
+  CubismExpressionObjects:
+  - {fileID: 11400000, guid: 436a5396d514f43acada5e21fcdd7f6f, type: 2}
+  - {fileID: 11400000, guid: 8f54b1fb527f242cbad4236fa7502fdd, type: 2}
+  - {fileID: 11400000, guid: 8f54b1fb527f242cbad4236fa7502fdd, type: 2}
