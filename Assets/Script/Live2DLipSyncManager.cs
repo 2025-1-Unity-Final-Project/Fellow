@@ -202,6 +202,13 @@ public class Live2DLipSyncManager : MonoBehaviour
         StartLipSyncWithMessage(testMessage, 4f);
     }
     
+    [ContextMenu("🎵 Test Random Voice")]
+    public void TestRandomVoice()
+    {
+        PlayRandomVoice();
+    }
+    
+    // 🎵 메인 함수 - 음성 재생 추가
     public void StartLipSyncWithMessage(string message, float displayDuration)
     {
         if (mouthOpenParam == null)
@@ -214,6 +221,44 @@ public class Live2DLipSyncManager : MonoBehaviour
         
         Debug.Log($"🎬 립싱크 시작: '{message}' ({displayDuration}초)");
         currentLipSyncCoroutine = StartCoroutine(LipSyncCoroutine(message, displayDuration));
+        
+        // 🎵 간단한 음성 재생 추가
+        PlayRandomVoice();
+    }
+    
+    // 🎵 랜덤 음성 재생 함수
+    private void PlayRandomVoice()
+    {
+        if (audioSource == null || voiceClips == null || voiceClips.Length == 0)
+        {
+            Debug.LogWarning("⚠️ 음성 재생 불가: AudioSource나 VoiceClips가 없습니다!");
+            return;
+        }
+        
+        // 랜덤 음성 클립 선택
+        AudioClip randomVoice = voiceClips[Random.Range(0, voiceClips.Length)];
+        
+        // 음성 길이를 1-2초로 제한
+        audioSource.clip = randomVoice;
+        audioSource.Play();
+        
+        // 1-2초 후 자동 정지
+        float maxDuration = Random.Range(1f, 2f);
+        StartCoroutine(StopVoiceAfterTime(maxDuration));
+        
+        Debug.Log($"🔊 랜덤 음성 재생: {randomVoice.name} ({maxDuration:F1}초)");
+    }
+    
+    // 🎵 음성 자동 정지 함수
+    private IEnumerator StopVoiceAfterTime(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        
+        if (audioSource != null && audioSource.isPlaying)
+        {
+            audioSource.Stop();
+            Debug.Log("🔇 음성 재생 자동 정지");
+        }
     }
     
     private IEnumerator LipSyncCoroutine(string message, float duration)
@@ -296,6 +341,20 @@ public class Live2DLipSyncManager : MonoBehaviour
         {
             StopCoroutine(currentLipSyncCoroutine);
             currentLipSyncCoroutine = null;
+        }
+        
+        // 🎵 음성 재생 정지 추가
+        if (currentVoiceCoroutine != null)
+        {
+            StopCoroutine(currentVoiceCoroutine);
+            currentVoiceCoroutine = null;
+        }
+        
+        // 오디오 정지
+        if (audioSource != null && audioSource.isPlaying)
+        {
+            audioSource.Stop();
+            Debug.Log("🔇 음성 재생 정지됨");
         }
         
         // 기존 리셋 코루틴 중단
