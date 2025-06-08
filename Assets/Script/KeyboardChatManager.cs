@@ -202,6 +202,9 @@ public class KeyboardChatManager : MonoBehaviour
     {
         Debug.Log($"메시지 처리: {message}");
         
+            // 사용자 메시지 저장 ⭐ 새로 추가
+        ChatDataManager.Instance.AddMessage(true, message, "나");
+
         // 사용자 메시지 표시
         ShowUserMessage(message);
         
@@ -237,6 +240,9 @@ public class KeyboardChatManager : MonoBehaviour
         {
             Destroy(currentAIMessage);
         }
+
+        // AI 메시지 저장 ⭐ 새로 추가
+        ChatDataManager.Instance.AddMessage(false, message, "AI");
 
         currentAIMessage = Instantiate(aiMessagePrefab, characterTransform);
         TextMeshProUGUI messageText = currentAIMessage.GetComponentInChildren<TextMeshProUGUI>();
