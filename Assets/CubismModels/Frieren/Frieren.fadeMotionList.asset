@@ -15,4 +15,4 @@ MonoBehaviour:
   MotionInstanceIds: 88f5ffffdce5ffff
   CubismFadeMotionObjects:
   - {fileID: 11400000, guid: e7cd02e12fea941b382e38397b6e1cc3, type: 2}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 6093509c121344e8880a235175fa0b62, type: 2}
