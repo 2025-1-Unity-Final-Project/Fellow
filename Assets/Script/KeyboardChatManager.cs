@@ -22,7 +22,7 @@ public class KeyboardChatManager : MonoBehaviour
     
     [Header("Live2D Systems")]
     public Live2DLipSyncManager lipSyncManager;          // 립싱크 시스템
-    public Live2DCharacterLifeSystem characterLifeSystem; // 생동감 시스템
+    public UnifiedLive2DLifeSystem unifiedLifeSystem;    // 통합 생동감 시스템
     
     [Header("Settings")]
     public float messageDuration = 3f;     // 사용자 메시지 표시 시간
@@ -245,11 +245,11 @@ public class KeyboardChatManager : MonoBehaviour
         float typingDuration = message.Length * 0.05f;
         typingDuration = Mathf.Clamp(typingDuration, 2f, 8f);
         
-        // 🎭 생동감 시스템에 대화 시작 알림
-        if (characterLifeSystem != null)
+        // 🎭 통합 생동감 시스템에 대화 시작 알림
+        if (unifiedLifeSystem != null)
         {
-            characterLifeSystem.SetTalkingState(true);
-            Debug.Log("생동감 시스템 일시정지 - 대화 시작");
+            unifiedLifeSystem.SetTalkingState(true);
+            Debug.Log("통합 생동감 시스템 일시정지 - 대화 시작");
         }
         
         // 🎤 립싱크 시작
@@ -263,8 +263,8 @@ public class KeyboardChatManager : MonoBehaviour
             Debug.LogWarning("LipSyncManager가 할당되지 않았습니다!");
         }
         
-        // 타이핑 효과 시작 (생동감 시스템과 연동)
-        StartCoroutine(TypeAIMessageWithLifeSystem(messageText, message, typingDuration));
+        // 타이핑 효과 시작 (통합 생동감 시스템과 연동)
+        StartCoroutine(TypeAIMessageWithUnifiedSystem(messageText, message, typingDuration));
         
         RectTransform msgRect = currentAIMessage.GetComponent<RectTransform>();
         msgRect.anchoredPosition = new Vector2(0f, 150f);
@@ -273,9 +273,9 @@ public class KeyboardChatManager : MonoBehaviour
     }
     
     /// <summary>
-    /// 생동감 시스템과 연동된 타이핑 효과
+    /// 통합 생동감 시스템과 연동된 타이핑 효과
     /// </summary>
-    IEnumerator TypeAIMessageWithLifeSystem(TextMeshProUGUI textComponent, string fullText, float duration)
+    IEnumerator TypeAIMessageWithUnifiedSystem(TextMeshProUGUI textComponent, string fullText, float duration)
     {
         textComponent.text = "";
         float timePerChar = duration / fullText.Length;
@@ -288,11 +288,11 @@ public class KeyboardChatManager : MonoBehaviour
         
         textComponent.text = fullText;
         
-        // 🎭 대화 종료 - 생동감 시스템 재개
-        if (characterLifeSystem != null)
+        // 🎭 대화 종료 - 통합 생동감 시스템 재개 (기본 생동감은 계속 작동)
+        if (unifiedLifeSystem != null)
         {
-            characterLifeSystem.SetTalkingState(false);
-            Debug.Log("대화 완료 - 생동감 시스템 재개");
+            unifiedLifeSystem.SetTalkingState(false);
+            Debug.Log("대화 완료 - 통합 생동감 시스템 재개");
         }
         
         Debug.Log("AI 메시지 타이핑 완료");
