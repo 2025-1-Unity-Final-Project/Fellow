@@ -1,8 +1,5 @@
 # Fellow - Unity Live2D AI Companion Game
 > Unity 기반 Live2D 캐릭터와 AI 채팅 시스템을 결합한 인터랙티브 게임 <br>
-24.12.30 - 25.02.21
-![Fellow](https://github.com/user-attachments/assets/placeholder-banner-image)
-![image](https://github.com/user-attachments/assets/placeholder-game-image)
 
 ## 🎮 *****Contributors*****
 | 성규현 <br> [@dmp100](https://github.com/dmp100) | koyy418 <br> [@koyy418](https://github.com/koyy418) |
@@ -43,11 +40,7 @@
 
 ## 📗 *****Convention*****
 [📱 Unity 개발 문서](https://docs.google.com/document/d/1hYzwONkhU0kB6pfipcdS6Ax6zguBCO7nJdch3NEX038/edit?tab=t.0)
-<br>
-[🚀 Git Convention + Branch Strategy](https://github.com/dmp100/Fellow/wiki)
-<br>
-[✏️Design Document](https://github.com/dmp100/Fellow/wiki/Design)
-<br/>
+
 
 ## 🔧 *****TECH STACKS*****
 | **Category** | **TechStack** |
